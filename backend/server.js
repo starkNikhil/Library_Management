@@ -3,6 +3,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import { connectDB } from './config/db.js';
 import authRouter from './routes/authRoutes.js';
+import studentRouter from './routes/studentRoutes.js';
 
 const PORT = 5000;
 const app = express();
@@ -17,7 +18,7 @@ connectDB();
 
 // ROUTES
 app.use("/api/auth", authRouter)
-
+app.use('/api/students', studentRouter)
 
 app.listen(PORT, () => {
     console.log(`Server Started on http://localhost:${PORT}`);
