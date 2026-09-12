@@ -35,7 +35,8 @@ export async function searchStudentByRollNo(req, res) {
         console.error("Error searching students by roll number:", error);
         res.status(500).json({
             success: false,
-            message: "Error searching students by roll number"
+            message: "Error searching students by roll number",
+            error: error.message
         })
     }
 }
