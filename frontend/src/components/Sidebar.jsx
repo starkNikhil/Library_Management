@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { act, useState } from "react";
 import { sidebarStyles as s } from "../assets/dummyStyles";
 import {
   Bell,
   BookCopy,
   ChartNoAxesCombined,
   ChevronRight,
+  Menu,
   ShieldCheck,
-  UserLockIcon,
+  X,
   UserRound,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const iconMap = {
   dashboard: ChartNoAxesCombined,
@@ -28,7 +29,7 @@ const Sidebar = ({
   accent = "user",
   logoSrc,
 }) => {
-  const location = UserLockIcon();
+  const location = useLocation();
   const [open, setOpen] = useState(false);
 
   const badgeStyles = accent === "admin" ? s.badgeAdmin : s.badgeUser;
@@ -84,10 +85,19 @@ const Sidebar = ({
                         <span className={`${s.navIconWrapper} ${active? s.navIconWrapperActive: s.navIconWrapperInactive}`}>
                             <Icon size={18}/>
                         </span>
+                        <span className="min-w-0 flex-1">
+                            <span className={s.navLabel}>{item.label}</span>
+                            <span className={`${s.navDescription} ${active ? s.navDescriptionActive: s.navDescriptionInactive}`}>
+                                {item.description}
+                            </span>
+                         </span>
+                         <ChevronRight size={16}
+                         className={active? s.navChevronActive: s.navChevronInactive}/>
                     </Link>
                 )
             })}
         </nav>
+        <div className={s.footer}></div>
       </aside>
     </>
   );
