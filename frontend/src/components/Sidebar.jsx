@@ -1,4 +1,4 @@
-import { act, useState } from "react";
+import {  useState } from "react";
 import { sidebarStyles as s } from "../assets/dummyStyles";
 import {
   Bell,
