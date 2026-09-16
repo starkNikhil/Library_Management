@@ -1,6 +1,8 @@
-import React from 'react'
 import Sidebar from './../components/Sidebar';
 import { BookMarked, ShieldCheck, Users } from 'lucide-react';
+import { useAuth } from '../shared/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { homeStyles as s } from '../assets/dummyStyles';
 
 const navItems =[
     {
@@ -38,32 +40,37 @@ const features = [
     },
 ]
 
-// const footerItems = currentUser?[
-//     {
-//         label: "Logout",
-//         icon: "login",
-//         kind: "primary",
-//         action:()=>{
-//             logout();
-//             Navigate("/");
-//         },
-//     },
-// ]:
-// [
-//     {label: "Login", href: "/login", icon:"login", kind: "primary"},{
-//         label: "Sign Up",
-//         href: "/Signup",
-//         icon: "signup",
-//         kind: "secondary",
-//     },
-// ]
 const Home = () => {
+    
+    const {currentUser, logout} = useAuth();
+    const navigate = useNavigate();
+    
+    const footerItems = currentUser?[
+        {
+            label: "Logout",
+            icon: "login",
+            kind: "primary",
+            action:()=>{
+                logout();
+                Navigate("/");
+            },
+        },
+    ]:
+    [
+        {label: "Login", href: "/login", icon:"login", kind: "primary"},{
+            label: "Sign Up",
+            href: "/Signup",
+            icon: "signup",
+            kind: "secondary",
+        },
+    ]
   return (
-    <div>
+    <div className={s.layoutContainer}>
         <Sidebar title="ShelfWise" subtitle="Library management portal" badge="Beautiful theme"
         navItems={navItems}
-        //  footerItems={footerItems}/>
+         footerItems={footerItems}
         />
+
     </div>
   )
 }
