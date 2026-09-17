@@ -1,4 +1,12 @@
-import { LockKeyhole, Mail, ShieldCheck, UserRound } from "lucide-react";
+import {
+  ArrowRight,
+  Eye,
+  EyeOff,
+  LockKeyhole,
+  Mail,
+  ShieldCheck,
+  UserRound,
+} from "lucide-react";
 import { loginStyles as s } from "../assets/dummyStyles";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../shared/AuthContext";
@@ -179,12 +187,42 @@ const Login = () => {
               </label>
               <label className="block">
                 <span className={s.fieldLabel}>
-                  <LockKeyhole size={15} />Password
+                  <LockKeyhole size={15} />
+                  Password
                 </span>
-               <div className={s.passwordWrapper}>
-                <input type={showPassword ? "text" : "password"} name="password" value={form.password} onChange={handleChange} placeholder="enter password" className={s.passwordInput} />
-               </div>
+                <div className={s.passwordWrapper}>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={form.password}
+                    onChange={handleChange}
+                    placeholder="enter password"
+                    className={s.passwordInput}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((current) => !current)}
+                    className={s.togglePasswordButton}
+                  >
+                    {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                  </button>
+                </div>
               </label>
+              {error && <div className={s.errorMessage}>{error}</div>}
+              <div className={s.footerFlex}>
+                <span className={s.footerText}>
+                  {form.role === "admin"
+                    ? "Admin accounts use existing credentials"
+                    : "Student signup is available below"}
+                </span>
+                {form.role === "user" &&(
+                  <Link to='/signup' className={s.signupLink}>Create Account</Link>
+                )}
+              </div>
+              <button className={s.submitButton} type="submit" disabled={loading}>
+                {loading ? "Logging in..." : "Login now"}
+                {!loading && <ArrowRight size={15}/>}
+              </button>
             </form>
           </div>
         </section>
