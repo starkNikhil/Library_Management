@@ -196,11 +196,14 @@ const Signup = () => {
           <p className={s.panelSubtitle}>Complete the student signup steps: account, OTP, and profile details.</p>
 
           <div className={s.stepGrid}>
-           {stepList.map((item)=>{
-            <div className={`${s.stepCard} ${step}`}>
+           {stepList.map((item)=>(
 
+            <div key={item.id}
+            className={`${s.stepCard} ${step>= item.id ? s.stepCardCompleted : s.stepCardPending}`}>
+                <p className={s.stepLabel}>step {item.id}</p>
+                <p className={s.stepTitle}>{item.title}</p>
             </div>
-           })}
+           ))}
           </div>
         </div>
       </section>
