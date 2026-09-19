@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { signupStyles as s } from "../assets/dummyStyles";
 import { useAuth } from "../shared/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Eye, EyeOff, LockKeyhole, Mail, Phone, UserRound } from "lucide-react";
 
 const stepList = [
   { id: 1, title: "Account" },
@@ -178,37 +178,119 @@ const Signup = () => {
     }, 1000);
   };
 
-  return <div className={s.pageContainer}>
-    {toast && (
-      <div className={`${s.toastBase} ${toast.tone ==="error" ? s.toastError : s.toastSuccess}`}>
-        <div className={s.toastContent}>
-      <CheckCircle2 size={18}/>
-      {toast.message}
-        </div>
-      </div>
-    )}
-    <div className={s.mainCard}>
-      <section className={s.formPanel}>
-        <div className={s.formInner}>
-          <Link to='/' className={s.backLink}>Back to Home
-          </Link>
-          <h1 className={s.panelTitle}>Create your student library account.</h1>
-          <p className={s.panelSubtitle}>Complete the student signup steps: account, OTP, and profile details.</p>
-
-          <div className={s.stepGrid}>
-           {stepList.map((item)=>(
-
-            <div key={item.id}
-            className={`${s.stepCard} ${step>= item.id ? s.stepCardCompleted : s.stepCardPending}`}>
-                <p className={s.stepLabel}>step {item.id}</p>
-                <p className={s.stepTitle}>{item.title}</p>
-            </div>
-           ))}
+  return (
+    <div className={s.pageContainer}>
+      {toast && (
+        <div
+          className={`${s.toastBase} ${toast.tone === "error" ? s.toastError : s.toastSuccess}`}
+        >
+          <div className={s.toastContent}>
+            <CheckCircle2 size={18} />
+            {toast.message}
           </div>
         </div>
-      </section>
+      )}
+      <div className={s.mainCard}>
+        <section className={s.formPanel}>
+          <div className={s.formInner}>
+            <Link to="/" className={s.backLink}>
+              Back to Home
+            </Link>
+            <h1 className={s.panelTitle}>
+              Create your student library account.
+            </h1>
+            <p className={s.panelSubtitle}>
+              Complete the student signup steps: account, OTP, and profile
+              details.
+            </p>
+
+            <div className={s.stepGrid}>
+              {stepList.map((item) => (
+                <div
+                  key={item.id}
+                  className={`${s.stepCard} ${step >= item.id ? s.stepCardCompleted : s.stepCardPending}`}
+                >
+                  <p className={s.stepLabel}>step {item.id}</p>
+                  <p className={s.stepTitle}>{item.title}</p>
+                </div>
+              ))}
+            </div>
+            <form className={s.form} onSubmit={handleSubmit}>
+              {step === 1 && (
+                <>
+                  <label className="block">
+                    <span className={s.fieldLabel}>
+                      <UserRound size={15} />
+                      Full Name
+                    </span>
+                    <input
+                      type="text"
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      placeholder="Enter your full name."
+                      className={s.input}
+                    />
+                  </label>
+                  <label className="block">
+                    <span className={s.fieldLabel}>
+                      <Mail size={15} />
+                      Email Address
+                    </span>
+                    <input
+                      type="email"
+                      name="email"
+                      value={form.email}
+                      onChange={handleChange}
+                      placeholder="student@campus.edu"
+                      className={s.input}
+                    />
+                  </label>
+                  <label className="block">
+                    <span className={s.fieldLabel}>
+                      <Phone size={15} />
+                      Mobile Number
+                    </span>
+                    <input
+                      type="text"
+                      name="phone"
+                      value={form.phone}
+                      onChange={handleChange}
+                      placeholder="+91 1234567890"
+                      className={s.input}
+                    />
+                  </label>
+                  <label className="block">
+                    <span className={s.fieldLabel}>
+                      <LockKeyhole size={15} />
+                      Password
+                    </span>
+                    <div className={s.passwordWrapper}>
+
+                    <input
+                      type={showPassword?"text": "password"}
+                      name="password"
+                      value={form.password}
+                      onChange={handleChange}
+                      placeholder="Create Password"
+                      className={s.passwordInput}
+                      />
+
+                      <button type="button"
+                      onClick={()=> setShowPassword((current)=> !current)}
+                      className={s.toggleButton}>
+                          {showPassword ?(<EyeOff size={17}/>): (<Eye size={17}/>)}
+                      </button>
+                      </div>
+                  </label>
+                </>
+              )}
+            </form>
+          </div>
+        </section>
+      </div>
     </div>
-  </div>;
+  );
 };
 
 export default Signup;
