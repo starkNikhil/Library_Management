@@ -2,7 +2,21 @@ import { useEffect, useState } from "react";
 import { signupStyles as s } from "../assets/dummyStyles";
 import { useAuth } from "../shared/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
-import { CheckCircle2, Eye, EyeOff, LockKeyhole, Mail, Phone, UserRound } from "lucide-react";
+import {
+  ArrowRight,
+  BadgeCheck,
+  CheckCircle2,
+  Eye,
+  EyeOff,
+  KeyRound,
+  LockKeyhole,
+  Mail,
+  Phone,
+  Sparkle,
+  Sparkles,
+  UserRound,
+} from "lucide-react";
+import { studentSemesters, studentYears } from "../Data/libraryData";
 
 const stepList = [
   { id: 1, title: "Account" },
@@ -266,27 +280,177 @@ const Signup = () => {
                       Password
                     </span>
                     <div className={s.passwordWrapper}>
-
-                    <input
-                      type={showPassword?"text": "password"}
-                      name="password"
-                      value={form.password}
-                      onChange={handleChange}
-                      placeholder="Create Password"
-                      className={s.passwordInput}
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        value={form.password}
+                        onChange={handleChange}
+                        placeholder="Create Password"
+                        className={s.passwordInput}
                       />
 
-                      <button type="button"
-                      onClick={()=> setShowPassword((current)=> !current)}
-                      className={s.toggleButton}>
-                          {showPassword ?(<EyeOff size={17}/>): (<Eye size={17}/>)}
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((current) => !current)}
+                        className={s.toggleButton}
+                      >
+                        {showPassword ? (
+                          <EyeOff size={17} />
+                        ) : (
+                          <Eye size={17} />
+                        )}
                       </button>
-                      </div>
+                    </div>
                   </label>
                 </>
               )}
+              {/* Step 2 */}
+              {step === 2 && (
+                <>
+                  <div className={s.otpInfoBox}>
+                    <p className={s.otpInfoLabel}>Verification Sent</p>
+                    <p className={s.otpInfoText}>
+                      We have sent a 6-digit OTP verification code to{" "}
+                      <span className={s.emailHighlight}>{form.email}</span>.
+                      Please check your inbox and enter the code below to verify
+                      your account.
+                    </p>
+                  </div>
+
+                  <label className="block">
+                    <span className={s.fieldLabel}>
+                      <KeyRound size={15} />
+                      OTP Verification
+                    </span>
+                    <input
+                      name="otp"
+                      type="text"
+                      value={form.otp}
+                      onChange={handleChange}
+                      placeholder="Enter 6-digit OTP"
+                      className={s.input}
+                    />
+                  </label>
+                </>
+              )}
+              {/* step 3. */}
+              {step === 3 && (
+                <>
+                  <label className="block">
+                    <span className={s.fieldLabelBlock}>Department</span>
+                    <input
+                      name="department"
+                      type="text"
+                      value={form.department}
+                      onChange={handleChange}
+                      placeholder="Write your department"
+                      className={s.input}
+                    />
+                  </label>
+
+                  <label className="block">
+                    <span className={s.fieldLabelBlock}>Stream</span>
+                    <input
+                      name="stream"
+                      type="text"
+                      value={form.stream}
+                      onChange={handleChange}
+                      placeholder="Write your stream"
+                      className={s.input}
+                    />
+                  </label>
+
+                  <div className={s.twoColumnGrid}>
+                    <label className="block">
+                      <span className={s.fieldLabelBlock}>Semester</span>
+                      <select
+                        name="semester"
+                        value={form.semester}
+                        onChange={handleChange}
+                        className={s.select}
+                      >
+                        {studentSemesters.map((semester) => (
+                          <option key={semester} value={semester}>
+                            {semester}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <label className="block">
+                      <span className={s.fieldLabelBlock}>Year</span>
+                      <select
+                        name="academicYear"
+                        value={form.academicYear}
+                        onChange={handleChange}
+                        className={s.select}
+                      >
+                        {studentYears.map((year) => (
+                          <option key={year} value={year}>
+                            {year}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+
+                  <label className="block">
+                    <span className={s.fieldLabelBlock}>Roll Number</span>
+                    <input
+                      name="rollNumber"
+                      type="text"
+                      value={form.rollNumber}
+                      onChange={handleChange}
+                      placeholder="Write your roll number"
+                      className={s.input}
+                    />
+                  </label>
+                </>
+              )}
+              {
+                error && <div className={s.errorMessage}> {error}</div>
+              }
+              <div className={s.buttonGroup}>
+              {
+                step >1 && (
+                  <button type="button"
+                  onClick={goBack}
+                  disabled={loading}
+                  className={s.backButton}>
+                    Back
+                  </button>
+                )
+              }
+              {step <3 ?(
+                <button type="button" onClick={goNext} disabled={loading} className={s.nextButton}>
+                  {loading ? "Please Wait..." : "Continue"}
+                  {!loading && <ArrowRight size={15}/>}
+                </button>
+              ):(
+                <button type="submit" disabled={loading} className={s.submitButton}>
+                  {loading ? "Completing Profile..." : "Complete profile"}
+                  {!loading && <ArrowRight size={15}/>}
+                </button>
+              )}
+              </div>
             </form>
           </div>
+        </section>
+        <section className={s.infoPanel}>
+          <span className={s.infoBadge}>
+            <Sparkles size={14}/>
+            Step Wise Signup
+          </span>
+                <h2 className={s.infoTitle}>
+                  Create the student account, verify OTP, and finish the profile in three steps
+                </h2>
+                <div className={s.infoList}>
+                  {signupHighlights.map((item)=>(
+                    <div key={item} className={s.infoListItem}>
+                      <BadgeCheck size={18} className={s.infoIcon}/>{item}
+                    </div>
+                  ))}
+                </div>
         </section>
       </div>
     </div>
