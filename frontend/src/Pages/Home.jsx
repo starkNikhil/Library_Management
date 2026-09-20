@@ -95,7 +95,7 @@ const Home = () => {
                     <Link
                       to={
                         currentUser.role === "admin"
-                          ? "/admin/dashboard"
+                          ? "admin/dashboard"
                           : "user/dashboard"
                       }
                       className={s.heroButtonPrimary}

@@ -12,7 +12,6 @@ import {
   LockKeyhole,
   Mail,
   Phone,
-  Sparkle,
   Sparkles,
   UserRound,
 } from "lucide-react";
@@ -30,7 +29,7 @@ const signupHighlights = [
   "Step 3 saves department, stream, semester, year, and roll number.",
 ];
 
-const demoOtp = "2468";
+
 
 const Signup = () => {
   const { registerStudent, completeProfileData, logout, verifyOtpCode } =
