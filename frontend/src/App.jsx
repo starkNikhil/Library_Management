@@ -5,6 +5,7 @@ import Signup from "./Pages/Signup";
 import ProtectedRoute from "./shared/ProtectedRoute";
 import AdminLayout from "./admin/AdminLayout";
 import AdminDashboardPage from "./admin/AdminDashboardPage";
+import AdminBooksPage from "./admin/AdminBooksPage";
 const App = () => {
   return (
     <Routes>
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboardPage />} />
+          <Route path="books" element={<AdminBooksPage/>}/>
         </Route>
       </Route>
     </Routes>

@@ -1,0 +1,167 @@
+import { useEffect, useState } from "react";
+import { adminBooksPageStyles as s } from "../assets/dummyStyles";
+import { useLibrary } from "../shared/LibraryContext";
+
+const getTodayIso = () => {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const createBookDraft = () => ({
+  id: `draft-${Date.now()}-${Math.random().toString(16).slice(2, 6)}`,
+  title: "",
+  bookCode: "",
+  issuedOn: getTodayIso(),
+  dueDate: "",
+});
+
+const createInitialForm = () => ({
+  studentName: "",
+  userEmail: "",
+  department: "",
+  stream: "",
+  academicYear: "",
+  semester: "",
+  rollNumber: "",
+  books: [createBookDraft()],
+});
+
+const AdminBooksPage = () => {
+  const { issueManualBooksToStudent, fineSettings } = useLibrary();
+  const { issueForm, setIssueForm } = useState(createInitialForm);
+  const [formMessage, setFormMessage] = useState("");
+  const [matchingStudents, setMatchingStudents] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [searchError, setSearchError] = useState("");
+  const searchTimeoutRef = useRef(null);
+  const isStudentSelected = Boolean(selectedStudent);
+  const canSearchRoll =
+    issueForm.rollNumber.trim().length > 0 && !isStudentSelected;
+
+  useEffect(() => {
+    if (!canSearchRoll) return;
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    searchTimeoutRef.current = window.setTimeout(async () => {
+      try {
+        setSearchError("");
+        const response = await fetch(
+          `http://localhost:5000/api/students/search-by-roll?roll=${encodeURIComponent(
+            issueForm.rollNumber.trim(),
+          )}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("library-auth-token")}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        const data = await response.json();
+        if (response.ok && data.success) {
+          setMatchingStudents(data.students || []);
+        } else {
+          setMatchingStudents([]);
+          setSearchError(
+            data.message || "unable to search students by roll number.",
+          );
+        }
+      } catch (error) {
+        console.error("Student roll search error: ", error);
+        setMatchingStudents([]);
+        setSearchError("Unable to fetch matching students.");
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+    return () => {
+      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    };
+  }, [issueForm.rollNumber, canSearchRoll]);
+
+  const clearSelectedStudent = () => {
+    setSelectedStudent(null);
+    setMatchingStudents([]);
+    setSearchError("");
+    setIssueForm((current) => ({
+      ...current,
+      studentName: "",
+      userEmail: "",
+      department: "",
+      stream: "",
+      academicYear: "",
+      semester: "",
+      rollNumber: "",
+    }));
+  };
+
+  const selectStudent = (student) => {
+    setFormMessage("");
+    setSearchError("");
+    setMatchingStudents([]);
+    setSelectedStudent(student);
+    setIssueForm((current) => ({
+      ...current,
+      studentName: student.name,
+      userEmail: student.email,
+      department: student.department || "",
+      stream: student.stream || "",
+      academicYear: student.academicYear || "",
+      semester: student.semester || "",
+      rollNumber: student.rollNumber || "",
+    }));
+  };
+
+  const handleIssueChange = (event) => {
+    const { name, value } = event.target;
+    setFormMessage("");
+    if (name === "roleNumber") {
+      setSelectedStudent(null);
+      setMatchingStudents([]);
+      (setSearchError(""), setIsSearching(Boolean(value.trim())));
+    }
+    setIssueForm((current) => ({
+      ...current,
+      [name]: value,
+    }));
+  };
+
+  const handleBookChange=(bookId, field, value)=>{
+    setFormMessage("");
+    setIssueForm((current)=>({
+        ...current,
+        books : current.books.map((book)=> book.id===bookId? {...book, [field]: value}: book)
+    }));
+  };
+
+  const addBookDraft=()=>{
+    setIssueForm((current)=>({
+        ...current,
+        books: [...current.books, createBookDraft()],
+    }))
+  }
+
+  return (
+    <div className={s.pageContainer}>
+      <section className={s.mainSection}>
+        <div className={s.innerContainer}>
+          <div className={s.headerFlex}>
+            <div>
+              <h2 className={s.title}>Issue book TO Student</h2>
+              <p className={s.subtitle}>
+                Select a student, add manual book entries with book code, and
+                the active overdue fine rule will be used automatically after
+                the due date.
+              </p>
+            </div>
+            <div className={s.fineRuleBadge}></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default AdminBooksPage;

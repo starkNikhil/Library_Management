@@ -1,11 +1,13 @@
 import {
   Activity,
   AlertTriangle,
+  ArrowRight,
   ShieldEllipsis,
   UserRound,
 } from "lucide-react";
 import { adminDashboardStyles as s } from "../assets/dummyStyles";
 import { useLibrary } from "../shared/LibraryContext";
+import { Link } from 'react-router-dom';
 const icons = [UserRound, Activity, ShieldEllipsis, AlertTriangle];
 
 const AdminDashboardPage = () => {
@@ -96,13 +98,45 @@ const AdminDashboardPage = () => {
     <p className={s.studentName}>
         {record.studentName}
     </p>
-    <p className={s.studentDetails}></p>
+    <p className={s.studentDetails}>{record.studentId ?? "not assigned"} | {record.email}</p>
+    <p className={s.studentFine}>
+        Rs. {record.totalFine}
+    </p>
+</div>
+<div className={s.highestFineBookContainer}>
+    <p className={s.highestFineLabel}>
+        Highest Fine Label
+    </p>
+    <p className={s.highestFineTitle}>
+        {record.title}
+    </p>
+</div>
+                        </div>
+                        <div className={s.detailsGrid}>
+<div className={s.detailItem}>
+    Department: {record.department ?? "General"}
+</div>
+<div className={s.detailItem}>Book Code: {record.bookCode}</div>
+<div className={s.detailItem}>
+    Highest Book Fine: Rs. {record.liveFine}
 </div>
                         </div>
                     </div>
                 )
+            )):(
+                <div className={s.emptyState}>
+                    No overdue books need urgent attention right now.
+                </div>
             )}
         </div>
+        {attentionRecords.length? (
+            <div className={s.viewMoreContainer}>
+                <Link to="/admin/users?status=Overdue&sort=high-to-low" className={s.viewMoreLink}>
+                View More
+                <ArrowRight size={16}/>
+                </Link>
+            </div>
+        ): null}
       </section>
     </div>
   );
