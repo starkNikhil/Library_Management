@@ -140,8 +140,39 @@ const AdminBooksPage = () => {
     setIssueForm((current)=>({
         ...current,
         books: [...current.books, createBookDraft()],
-    }))
+    }));
+  };
+
+  const removeBookDraft = (bookId)=>{
+    setIssueForm((current)=>({
+      ...current,
+      books: current.books.length >1 ? current.books.filter((book)=> book.id !== bookId) : current.book,
+    }));
+  };
+
+const handleIssueSubmit = async(event)=>{
+  event.preventDefault();
+  if(!issueForm.userEmail){
+    setFormMessage("Search and select a student by roll number befor issuing books",)
   }
+
+  const result = await issueManualBooksToStudent({
+    userEmail : issueForm.userEmail,
+    studentDetails: issueForm,
+    books: issueForm.books,
+  })
+  if(!result.ok){
+    setFormMessage(result.error ?? "Unable to issue books right now.");
+    return;
+  }
+  setFormMessage(`${result.count} manual book record(s) issued successfully`);
+
+  setIssueForm(createInitialForm());
+  setSelectedStudent(null);
+  setMatchingStudents([]);
+  setSearchError("");
+};
+
 
   return (
     <div className={s.pageContainer}>
@@ -156,7 +187,9 @@ const AdminBooksPage = () => {
                 the due date.
               </p>
             </div>
-            <div className={s.fineRuleBadge}></div>
+            <div className={s.fineRuleBadge}>
+              Fine rule: Rs. {fineSettings.amount} per {fineSettings.interval}
+            </div>
           </div>
         </div>
       </section>
