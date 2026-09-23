@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { adminBooksPageStyles as s } from "../assets/dummyStyles";
 import { useLibrary } from "../shared/LibraryContext";
+import { FilePlus2, Search, Trash2 } from "lucide-react";
 
 const getTodayIso = () => {
   const date = new Date();
@@ -9,7 +10,6 @@ const getTodayIso = () => {
   const day = `${date.getDate()}`.padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
-
 const createBookDraft = () => ({
   id: `draft-${Date.now()}-${Math.random().toString(16).slice(2, 6)}`,
   title: "",
@@ -17,7 +17,6 @@ const createBookDraft = () => ({
   issuedOn: getTodayIso(),
   dueDate: "",
 });
-
 const createInitialForm = () => ({
   studentName: "",
   userEmail: "",
@@ -31,7 +30,7 @@ const createInitialForm = () => ({
 
 const AdminBooksPage = () => {
   const { issueManualBooksToStudent, fineSettings } = useLibrary();
-  const { issueForm, setIssueForm } = useState(createInitialForm);
+  const [issueForm, setIssueForm] = useState(createInitialForm);
   const [formMessage, setFormMessage] = useState("");
   const [matchingStudents, setMatchingStudents] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -65,11 +64,11 @@ const AdminBooksPage = () => {
         } else {
           setMatchingStudents([]);
           setSearchError(
-            data.message || "unable to search students by roll number.",
+            data.message || "Unable to search students by roll number.",
           );
         }
       } catch (error) {
-        console.error("Student roll search error: ", error);
+        console.error("Student roll search error:", error);
         setMatchingStudents([]);
         setSearchError("Unable to fetch matching students.");
       } finally {
@@ -117,10 +116,11 @@ const AdminBooksPage = () => {
   const handleIssueChange = (event) => {
     const { name, value } = event.target;
     setFormMessage("");
-    if (name === "roleNumber") {
+    if (name === "rollNumber") {
       setSelectedStudent(null);
       setMatchingStudents([]);
-      (setSearchError(""), setIsSearching(Boolean(value.trim())));
+      setSearchError("");
+      setIsSearching(Boolean(value.trim()));
     }
     setIssueForm((current) => ({
       ...current,
@@ -128,51 +128,60 @@ const AdminBooksPage = () => {
     }));
   };
 
-  const handleBookChange=(bookId, field, value)=>{
+  const handleBookChange = (bookId, field, value) => {
     setFormMessage("");
-    setIssueForm((current)=>({
-        ...current,
-        books : current.books.map((book)=> book.id===bookId? {...book, [field]: value}: book)
-    }));
-  };
-
-  const addBookDraft=()=>{
-    setIssueForm((current)=>({
-        ...current,
-        books: [...current.books, createBookDraft()],
-    }));
-  };
-
-  const removeBookDraft = (bookId)=>{
-    setIssueForm((current)=>({
+    setIssueForm((current) => ({
       ...current,
-      books: current.books.length >1 ? current.books.filter((book)=> book.id !== bookId) : current.book,
+      books: current.books.map((book) =>
+        book.id === bookId ? { ...book, [field]: value } : book,
+      ),
     }));
   };
 
-const handleIssueSubmit = async(event)=>{
-  event.preventDefault();
-  if(!issueForm.userEmail){
-    setFormMessage("Search and select a student by roll number befor issuing books",)
-  }
+  const addBookDraft = () => {
+    setIssueForm((current) => ({
+      ...current,
+      books: [...current.books, createBookDraft()],
+    }));
+  };
 
-  const result = await issueManualBooksToStudent({
-    userEmail : issueForm.userEmail,
-    studentDetails: issueForm,
-    books: issueForm.books,
-  })
-  if(!result.ok){
-    setFormMessage(result.error ?? "Unable to issue books right now.");
-    return;
-  }
-  setFormMessage(`${result.count} manual book record(s) issued successfully`);
+  const removeBookDraft = (bookId) => {
+    setIssueForm((current) => ({
+      ...current,
+      books:
+        current.books.length > 1
+          ? current.books.filter((book) => book.id !== bookId)
+          : current.books,
+    }));
+  };
 
-  setIssueForm(createInitialForm());
-  setSelectedStudent(null);
-  setMatchingStudents([]);
-  setSearchError("");
-};
+  const handleIssueSubmit = async (event) => {
+    event.preventDefault();
+    if (!issueForm.userEmail) {
+      setFormMessage(
+        "Search and select a student by roll number before issuing books.",
+      );
+      return;
+    }
 
+    const result = await issueManualBooksToStudent({
+      userEmail: issueForm.userEmail,
+      studentDetails: issueForm,
+      books: issueForm.books,
+    });
+
+    if (!result.ok) {
+      setFormMessage(result.error ?? "unable to issue books right now.");
+      return;
+    }
+    setFormMessage(
+      `${result.count}  manual book record(s) issued successfully!`,
+    );
+    setIssueForm(createInitialForm(null));
+    setSelectedStudent(null);
+    setMatchingStudents([]);
+    setSearchError("");
+  };
 
   return (
     <div className={s.pageContainer}>
@@ -180,7 +189,7 @@ const handleIssueSubmit = async(event)=>{
         <div className={s.innerContainer}>
           <div className={s.headerFlex}>
             <div>
-              <h2 className={s.title}>Issue book TO Student</h2>
+              <h2 className={s.title}>Issue Book to student</h2>
               <p className={s.subtitle}>
                 Select a student, add manual book entries with book code, and
                 the active overdue fine rule will be used automatically after
@@ -188,9 +197,255 @@ const handleIssueSubmit = async(event)=>{
               </p>
             </div>
             <div className={s.fineRuleBadge}>
-              Fine rule: Rs. {fineSettings.amount} per {fineSettings.interval}
+              Fine rule: Rs. {fineSettings.amount} per{" "}
+              {fineSettings.innerContainer}
             </div>
           </div>
+          <form className={s.form} onSubmit={handleIssueSubmit}>
+            <div className={s.formGrid}>
+              <label className={s.label}>
+                <span className={s.labelSpan}>Student Name</span>
+                <div className={s.searchInputWrapper}>
+                  <Search size={16} className={s.searchIcon} />
+                  <input
+                    type="text"
+                    name="studentName"
+                    value={issueForm.studentName}
+                    readOnly
+                    placeholder="Selected Student name"
+                    className={s.readonlyInput}
+                  />
+                </div>
+              </label>
+              <label className={s.label}>
+                <span className={s.labelSpan}>Department</span>
+
+                <input
+                  type="text"
+                  name="Department"
+                  value={issueForm.department}
+                  readOnly={isStudentSelected}
+                  placeholder="Department"
+                  className={s.textInput}
+                />
+              </label>
+              <label className={s.label}>
+                <span className={s.labelSpan}>Stream</span>
+
+                <input
+                  type="text"
+                  name="stream"
+                  value={issueForm.stream}
+                  readOnly={isStudentSelected}
+                  onChange={handleIssueChange}
+                  placeholder="Stream"
+                  className={s.textInput}
+                />
+              </label>
+              <label className={s.label}>
+                <span className={s.labelSpan}>Year</span>
+
+                <input
+                  type="text"
+                  name="year"
+                  value={issueForm.year}
+                  readOnly={isStudentSelected}
+                  onChange={handleIssueChange}
+                  placeholder="Year"
+                  className={s.textInput}
+                />
+              </label>
+              <label className={s.label}>
+                <span className={s.labelSpan}>Semester</span>
+
+                <input
+                  type="text"
+                  name="semester"
+                  value={issueForm.semester}
+                  readOnly={isStudentSelected}
+                  onChange={handleIssueChange}
+                  placeholder="Semester"
+                  className={s.textInput}
+                />
+              </label>
+              <label className={s.label}>
+                <span className={s.labelSpan}>Roll Number</span>
+
+                <input
+                  type="text"
+                  name="Roll Number"
+                  value={issueForm.rollNumber}
+                  readOnly={isStudentSelected}
+                  onChange={handleIssueChange}
+                  placeholder="Roll Number"
+                  className={s.textInput}
+                />
+              </label>
+            </div>
+
+            <div className={s.matchingContainer}>
+              <p className={s.matchingTitle}>Matching Students</p>
+              <div className={s.studentList}>
+                {isSearching ? (
+                  <span className={s.searchingMessage}>
+                    Searching for students...
+                  </span>
+                ) : matchingStudents.length ? (
+                  matchingStudents.map((student) => (
+                    <button
+                      key={student.email}
+                      type="button"
+                      onClick={() => selectStudent(student)}
+                      className={`${s.studentButtonBase} ${
+                        selectedStudent?.email === student.email
+                          ? s.studentButtonSelected
+                          : s.studentButtonUnselected
+                      }`}
+                    >
+                      <span>{student.name}</span>
+                      <span className={s.studentRollSpan}>
+                        - {student.rollNumber}
+                      </span>
+                    </button>
+                  ))
+                ) : (
+                  <p className={s.noMatchText}>
+                    {issueForm.rollNumber.trim()
+                      ? "No matching students found."
+                      : "Type a roll number to search registered students."}
+                  </p>
+                )}
+              </div>
+              {searchError && <p className={s.errorText}>{searchError}</p>}
+
+              {selectedStudent && (
+                <div className={s.selectedStudentContainer}>
+                  <span className={s.selectedStudentBadge}>
+                    Selected: {selectedStudent.name} -{" "}
+                    {selectedStudent.rollNumber}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={clearSelectedStudent}
+                    className={s.clearButton}
+                  >
+                    Clear selection
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className={s.booksSection}>
+              <div className={s.booksHeader}>
+                <h3 className={s.booksTitle}>Manual Book Entries</h3>
+                <button
+                  type="button"
+                  onClick={addBookDraft}
+                  className={s.addBookButton}
+                >
+                  <FilePlus2 size={16} />
+                  Add Book
+                </button>
+              </div>
+
+              <div className={s.booksGrid}>
+                {issueForm.books.map((book, index) => (
+                  <article key={book.id} className={s.bookCard}>
+                    <div className={s.bookCardHeader}>
+                      <div className={s.bookIndexWrapper}>
+                        <p className={s.bookIndexLabel}>
+                          Manual Book {index + 1}
+                        </p>
+                        <p className={s.bookIndexHelper}>
+                          Add book name and code. Issue date is set
+                          automatically to today.
+                        </p>
+                      </div>
+                      {issueForm.books.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeBookDraft(book.id)}
+                          className={s.deleteButton}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </div>
+
+                    <div className={s.bookFieldsGrid}>
+                      <label className={s.bookFieldLabel}>
+                        <span className={s.labelSpan}>Book Name</span>
+                        <input
+                          type="text"
+                          value={book.title}
+                          onChange={(event) =>
+                            handleBookChange(
+                              book.id,
+                              "title",
+                              event.target.value,
+                            )
+                          }
+                          placeholder="Write book name"
+                          className={s.bookFieldInput}
+                        />
+                      </label>
+
+                      <label className={s.bookFieldLabel}>
+                        <span className={s.labelSpan}>Book Code</span>
+                        <input
+                          type="text"
+                          value={book.bookCode}
+                          onChange={(event) =>
+                            handleBookChange(
+                              book.id,
+                              "bookCode",
+                              event.target.value,
+                            )
+                          }
+                          placeholder="Write book code"
+                          className={s.bookFieldInput}
+                        />
+                      </label>
+
+                      <div className={s.dateGrid}>
+                        <label className={s.bookFieldLabel}>
+                          <span className={s.labelSpan}>Issue Date</span>
+                          <input
+                            type="date"
+                            value={book.issuedOn}
+                            readOnly
+                            disabled
+                            className={s.dateInputDisabled}
+                          />
+                        </label>
+
+                        <label className={s.bookFieldLabel}>
+                          <span className={s.labelSpan}>Due Date</span>
+                          <input
+                            type="date"
+                            value={book.dueDate}
+                            onChange={(event) =>
+                              handleBookChange(
+                                book.id,
+                                "dueDate",
+                                event.target.value,
+                              )
+                            }
+                            min={getTodayIso()}
+                            className={s.dateInput}
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+            {formMessage && <div className={s.formMessage}>{formMessage}</div>}
+            <button className={s.submitButton} type="submit">
+              Issue Manual Books
+            </button>
+          </form>
         </div>
       </section>
     </div>

@@ -1,17 +1,41 @@
+// assets/dummyStyles.js
+
 export const adminBooksPageStyles = {
-    // top level containers
-    pageContainer: "space-y-8",
-    mainSection: "rounded-[26px] border border-white/70 bg-white/75 p-5 shadow-[0_25px_60px_rgba(20,35,29,0.18)] backdrop-blur-[18px] sm:rounded-[30px] sm:p-6",
-    innerContainer: "rounded-[22px] border-library-ink/10 bg-[linear-gradient(145deg, color-mix(iN_srgb, var(--color-library-paper)_90%, white), color-mix(in_srgb,white_96%,transparent))] p-4 shadow-[0_20px_42px_rgba(20,35,29,0.08)] sm:rounded-[26px] sm:p-5",
+  // top‑level containers
+  pageContainer: "space-y-8",
+  mainSection: "rounded-[26px] border border-white/70 bg-white/75 p-5 shadow-[0_25px_60px_rgba(20,35,29,0.18)] backdrop-blur-[18px] sm:rounded-[30px] sm:p-6",
+  innerContainer: "rounded-[22px] border border-library-ink/10 bg-[linear-gradient(145deg,color-mix(in_srgb,var(--color-library-paper)_90%,white),color-mix(in_srgb,white_96%,transparent))] p-4 shadow-[0_20px_42px_rgba(20,35,29,0.08)] sm:rounded-[26px] sm:p-5",
+  headerFlex: "flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between",
+  title: "font-display text-2xl font-semibold text-library-ink sm:text-3xl",
+  subtitle: "mt-1 text-sm text-library-ink/65",
+  fineRuleBadge: "w-full rounded-2xl border border-library-ink/10 bg-white/80 px-4 py-2 text-sm text-library-ink/62 sm:w-auto sm:rounded-full",
+  form: "mt-5 space-y-5",
+  formGrid: "grid gap-4 md:grid-cols-2 xl:grid-cols-3",
 
-    headerFlex: "flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between",
-    title: "font-display text-2xl font-semibold text-library sm:text-3xl",
-    subtitle: "mt-1 text-sm text-library-ink/65",
-    fineRuleBadge: "w-full rounded-2xl border border-library-ink/10 bg-white/80 px-4 py-2 text-sm text-library-ink/62 sm:w-auto sm:rounded-full",
-    form: "mt-5 space-y-5",
-    formGrid: "grid gap-4 md:grid-cols-2 xl:grid-cols-3",
+  // form labels & inputs
+  label: "block",
+  labelSpan: "mb-2 block text-xs font-bold uppercase tracking-[0.2em] text-library-ink/45",
+  searchInputWrapper: "flex items-center gap-2 rounded-2xl border border-library-ink/10 bg-white/85 px-4 py-3",
+  searchIcon: "text-library-ink/55",
+  readonlyInput: "w-full bg-transparent text-library-ink/80 outline-none",
+  textInput: "w-full rounded-2xl border border-library-ink/10 bg-white/85 px-4 py-3 outline-none",
 
-    // books section
+  // matching students section
+  matchingContainer: "rounded-3xl border border-library-ink/10 bg-white/80 p-4",
+  matchingTitle: "text-xs font-bold uppercase tracking-[0.2em] text-library-ink/45",
+  studentList: "mt-3 flex flex-wrap gap-2",
+  searchingMessage: "rounded-full border border-library-ink/10 bg-library-paper/80 px-4 py-2 text-sm text-library-ink/65",
+  studentButtonBase: "rounded-full border px-4 py-2 text-sm font-semibold transition",
+  studentButtonSelected: "border-library-panel bg-library-panel text-library-paper",
+  studentButtonUnselected: "border-library-ink/10 bg-library-paper/80 text-library-ink hover:bg-library-paper",
+  studentRollSpan: "ml-2 text-library-ink/60",
+  noMatchText: "text-sm text-library-ink/60",
+  errorText: "mt-2 text-sm text-library-red-600",
+  selectedStudentContainer: "mt-4 flex items-center gap-3",
+  selectedStudentBadge: "rounded-full bg-library-paper/90 px-3 py-2 text-sm font-semibold text-library-ink/80",
+  clearButton: "rounded-full border border-library-ink/10 bg-white/80 px-3 py-2 text-sm text-library-ink transition hover:bg-library-paper",
+
+  // books section
   booksSection: "space-y-4",
   booksHeader: "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between",
   booksTitle: "font-display text-xl font-semibold text-library-ink sm:text-2xl",
@@ -33,8 +57,10 @@ export const adminBooksPageStyles = {
   // messages & submit
   formMessage: "rounded-2xl border border-library-ink/10 bg-library-paper px-4 py-3 text-sm text-library-ink/72",
   submitButton: "rounded-2xl bg-library-panel px-5 py-3 text-sm font-semibold text-library-paper",
-
 };
+
+// assets/dummyStyles.js
+// assets/dummyStyles.js
 
 export const adminDashboardStyles = {
   // Outer container
