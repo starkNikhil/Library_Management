@@ -6,6 +6,10 @@ import ProtectedRoute from "./shared/ProtectedRoute";
 import AdminLayout from "./admin/AdminLayout";
 import AdminDashboardPage from "./admin/AdminDashboardPage";
 import AdminBooksPage from "./admin/AdminBooksPage";
+import AdminUsersPage from "./admin/AdminUsersPage";
+import AdminFinesPage from "./admin/AdminFinesPage";
+import UserLayout from "./user/UserLayout";
+import UserDashboardPage from './user/UserDashboardPage';
 const App = () => {
   return (
     <Routes>
@@ -19,7 +23,16 @@ const App = () => {
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboardPage />} />
           <Route path="books" element={<AdminBooksPage/>}/>
+          <Route path="users" element={<AdminUsersPage/>}/>
+          <Route path="fines" element={<AdminFinesPage/>}/>
         </Route>
+      </Route>
+      <Route element={<ProtectedRoute allowedRole={"user"}/>}>
+      <Route path="/user" element={<UserLayout/>}>
+      <Route index element={<Navigate to="/user/dashboard" replace/>}/>
+      <Route path="dashboard" element={<UserDashboardPage/>}/>
+      </Route>
+
       </Route>
     </Routes>
   );
